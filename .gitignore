@@ -1,3 +1,7 @@
+# sensetive data
+!tmp/
+tmp/*
+
 # Logs
 logs
 *.log
