@@ -1,11 +1,13 @@
-interface StudentType {
+export interface StudentType {
     index: number,
     name: string,
     school: string
-}
-interface KurseType {
+};
+export interface KursType {
     kursnummer: string,
-    kurs: string,
+    kursname: string,
     lehrkraft: string,
     schueler: StudentType[]
-}
+};
+export type KurseType = KursType[];
+export type PagesType = string[];
