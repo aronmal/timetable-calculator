@@ -1,5 +1,5 @@
 import fs, { promises } from 'fs';
-import { convert, kurse } from './helpers';
+import { convert, kurse, sanitise } from './helpers';
 import { KurseType } from './interfaces';
 
 export async function extract(source: string) {
@@ -10,17 +10,17 @@ export async function extract(source: string) {
     console.log(1);
     
     let data: KurseType = [];
+    let rawData: string[] = [];
     const stream = fs.createReadStream(source);
     stream.on('data', _buff => {
         const buff = _buff.toString()
         if (typeof buff !== 'string')
             return;
-        data = [ ...data, ...kurse(convert(buff))];
+        rawData = [ ...rawData, ...convert(buff)];
     });
     stream.on('end', () => {
         console.log('[INFO] End.');
-        data.pop();
-        data.pop();
+        data = kurse(sanitise(rawData));
         output.write(JSON.stringify(data));
         output.end();
         process.exit();

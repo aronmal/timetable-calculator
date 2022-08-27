@@ -1,4 +1,4 @@
-import { KurseType, KursType, PagesType, StudentType } from "./interfaces";
+import { KursType, PagesType, StudentType } from "./interfaces";
 
 export const toHex = (v: string) => v.charCodeAt(0).toString(16);
 export function pdfCharToChar (s: string) {
@@ -41,13 +41,15 @@ export function getStudents(arr: string[]) {
     arr.forEach((s, i) => {
         if (i < 8)
             return;
-        if (/^[\d\.]+$/.test(s) && parseInt(s) !== 1) {
+        if (/^[\d]+$/.test(s) && s !== '1') {
             result.push(cache);
             cache = {...template};
             index = i;
         }
-        if (i > arr.length-2)
+        if (/^\d+\.$/.test(s)) {
+            index ++;
             return;
+        }
         if (i - index === 0)
             cache.index = parseInt(s);
         if (i - index === 1)
@@ -57,12 +59,7 @@ export function getStudents(arr: string[]) {
         if (i - index === 3)
             cache.name += s;
     })
-    //     .filter((_,i) => !(i < 8 || i > arr.length-2));
-    // filered.forEach((e, i) => {
-    //     if ((i % 3) !== 0)
-    //         return;
-    //     result.push({index: parseInt(e), name: arr[i+9], school: arr[i+10]})
-    // })
+    result.push(cache);
     return result;
 };
 export function kurse(pages: PagesType) {
@@ -82,3 +79,14 @@ export function kurse(pages: PagesType) {
         })
 }
 export const convert = (s: string) => s.split('').map(v => pdfCharToChar(v)).join('').split('~') as PagesType;
+export function sanitise(data: string[]) {
+    let result: string[] = [];
+    data.forEach(s => {
+        if (/Kurswahl Berufliches Gymnasium/.test(s)) {
+            result.push(s);
+        } else {
+            result[result.length-1] += s;
+        }
+    });
+    return result;
+};
