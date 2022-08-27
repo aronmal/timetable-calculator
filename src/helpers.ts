@@ -8,9 +8,13 @@ export function pdfCharToChar (s: string) {
     } else if (hex === '20') {
         return ' ';     // just a space
     } else if (hex === 'dbf8') { // dig = 248 | char = ù
-        return 'fl';    // special font double char
-    } else if (hex === 'de01') { // dig = 1
-        return '';      // always a follower of the double char 'fl'
+        return 'f';    // special double char font
+    } else if (hex === 'de01') {
+        return 'l';      // a follower of the double char 'fl'
+    } else if (hex === 'ddff') {
+        return 'f';      // a follower of the double char 'ff'
+    } else if (hex === 'de00') {
+        return 'i';      // a follower of the double char 'ff'
     } else if (hex === 'c') { // The character U+000c is invisible.
         return '~';     // being used to seperate pages
     } else if (hex[0] + hex[1] !== 'e0') { // yet unknown chars
@@ -41,12 +45,12 @@ export function getStudents(arr: string[]) {
     arr.forEach((s, i) => {
         if (i < 8)
             return;
-        if (/^[\d]+$/.test(s) && s !== '1') {
+        if (/^[\d]+$/.test(s) && s !== '1') { // save cache and continue
             result.push(cache);
             cache = {...template};
             index = i;
         }
-        if (/^\d+\.$/.test(s)) {
+        if (/^\d+\./.test(s)) { // early return on date
             index ++;
             return;
         }
