@@ -17,10 +17,11 @@ export async function extractCourses(source: string) {
         rawData = [ ...rawData, ...convert(buff)];
     });
     stream.on('end', () => {
-        console.log('[INFO] End.');
         const data = getCourses(sanitise(rawData));
         output.write(JSON.stringify(data));
         output.end();
+        console.log('[INFO] End.');
+        process.exit();
     });
 }
 export async function extractLessons(source: string, i: number) {
@@ -39,10 +40,10 @@ export async function extractLessons(source: string, i: number) {
         rawData = [ ...rawData, ...buff];
     });
     stream.on('end', () => {
-        console.log('[INFO] End.');
         const data = getLessons(rawData);
         output.write(JSON.stringify(data));
         output.end();
+        console.log('[INFO] End.');
     });
 }
 

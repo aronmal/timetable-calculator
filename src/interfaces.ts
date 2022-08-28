@@ -18,3 +18,8 @@ export interface period {
     week: number
 }
 export type day = period[][];
+export enum Week {
+    odd = 1,
+    even = 2,
+    all = 3
+};
