@@ -3,11 +3,18 @@ export interface StudentType {
     name: string,
     school: string
 };
-export interface KursType {
-    kursnummer: string,
-    kursname: string,
-    lehrkraft: string,
-    schueler: StudentType[]
+export interface CourseType {
+    courseNumber: string,
+    courseName: string,
+    teacher: string,
+    students: StudentType[]
 };
-export type KurseType = KursType[];
+export type CoursesType = CourseType[];
 export type PagesType = string[];
+export interface period {
+    room: string,
+    course: string,
+    teacher: string,
+    week: number
+}
+export type day = period[][];

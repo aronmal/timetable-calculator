@@ -1,4 +1,4 @@
-import { KursType, PagesType, StudentType } from "./interfaces";
+import { CourseType, day, PagesType, period, StudentType } from "./interfaces";
 
 export const toHex = (v: string) => v.charCodeAt(0).toString(16);
 export function pdfCharToChar (s: string) {
@@ -17,9 +17,8 @@ export function pdfCharToChar (s: string) {
         return 'i';      // a follower of the double char 'ff'
     } else if (hex === 'c') { // The character U+000c is invisible.
         return '~';     // being used to seperate pages
-    } else if (hex[0] + hex[1] !== 'e0') { // yet unknown chars
+    } else if (hex[0] + hex[1] !== 'e0') // yet unknown chars
         return '0x' + hex;  // display as hex value
-    }
     const digit = parseInt("0x" + hex[2] + hex[3]);
     const char = String.fromCharCode(digit+1);
     return char;
@@ -66,22 +65,59 @@ export function getStudents(arr: string[]) {
     result.push(cache);
     return result;
 };
-export function kurse(pages: PagesType) {
+export function getCourses(pages: PagesType) {
     return pages
         .map(page => page
             .split('\n')
             .filter(v => v)
         )
         .map(e => {
-            const kurs: KursType = {
-                kursnummer: e[3],
-                kursname: e[5],
-                lehrkraft: e[7],
-                schueler: getStudents(e)
+            const course: CourseType = {
+                courseNumber: e[3],
+                courseName: e[5],
+                teacher: e[7],
+                students: getStudents(e)
             }
-            return kurs;
+            return course;
         })
-}
+};
+export function getLessons(arr: string[]) {
+    const data: string[][] = JSON.parse(arr
+        .join('')
+        .replaceAll(/<(tr|table)>/g, '[')
+        .replaceAll(/<\/(tr|table)>/g, ']')
+        .replaceAll('<td>', '"')
+        .replaceAll('</td>', '"')
+        .replaceAll(/]\n\s*\[/g, '],[')
+        .replaceAll(/"\n\s*"/g, '","')
+        );
+    enum week {
+        odd = 1,
+        even = 2,
+        all = 3
+    };
+    let sorted: day = [];
+    for (let x = 0; x < data.length/4; x++) {
+        sorted.push([]);
+        for (let y = 1; y < data[x*4].length; y++) {
+            const course = data[x*4+2][y]
+            const teachers = data[x*4+3][y].split(' ');
+            const cache: period[] = [{
+                room: data[x*4][y],
+                course,
+                teacher: teachers[0],
+                week: /\((UW|GW)\)/.test(course) ? (/\(UW\)/.test(course) ? week.odd : week.even) : week.all
+            }, {
+                room: data[x*4+1][y],
+                course,
+                teacher: teachers[1],
+                week: /\((UW|GW)\)/.test(course) ? (/\(UW\)/.test(course) ? week.odd : week.even) : week.all
+            }].filter(e => e.room || e.teacher);
+            sorted[x].push(...cache);
+        }
+    }
+    return sorted;
+};
 export const convert = (s: string) => s.split('').map(v => pdfCharToChar(v)).join('').split('~') as PagesType;
 export function sanitise(data: string[]) {
     let result: string[] = [];

@@ -2,7 +2,7 @@
 
 ## ioBroker script
 
-```
+```javascript
 // Initialize
 var Text2, Empfaenger, Nachricht;
 
@@ -33,4 +33,8 @@ on({id: "telegram.0.communicate.request"/*Last received request*/, change: "any"
 			user: Empfaenger
 		});
     };
+```
+
+```javascript
+if (/\(.+\)/.test(teacher)
 ```

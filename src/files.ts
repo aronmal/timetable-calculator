@@ -1,15 +1,13 @@
 import fs, { promises } from 'fs';
-import { convert, kurse, sanitise } from './helpers';
-import { KurseType } from './interfaces';
+import { getLessons, convert, getCourses, sanitise } from './helpers';
 
-export async function extract(source: string) {
+export async function extractCourses(source: string) {
     console.log('[INFO] Start...');
 
-    const output = fs.createWriteStream('./tmp/output.txt');
+    const output = fs.createWriteStream('./tmp/course-listings.json');
     output.on('error', (err) => console.log(err));
     console.log(1);
     
-    let data: KurseType = [];
     let rawData: string[] = [];
     const stream = fs.createReadStream(source);
     stream.on('data', _buff => {
@@ -20,10 +18,31 @@ export async function extract(source: string) {
     });
     stream.on('end', () => {
         console.log('[INFO] End.');
-        data = kurse(sanitise(rawData));
+        const data = getCourses(sanitise(rawData));
         output.write(JSON.stringify(data));
         output.end();
-        process.exit();
+    });
+}
+export async function extractLessons(source: string, i: number) {
+    console.log('[INFO] Start...');
+
+    const output = fs.createWriteStream(`./tmp/${i}.json`);
+    output.on('error', (err) => console.log(err));
+    console.log(`'${i}.json' will be generated...`);
+    
+    let rawData: string[] = [];
+    const stream = fs.createReadStream(`./tmp/${source}.html`);
+    stream.on('data', _buff => {
+        const buff = _buff.toString()
+        if (typeof buff !== 'string')
+            return;
+        rawData = [ ...rawData, ...buff];
+    });
+    stream.on('end', () => {
+        console.log('[INFO] End.');
+        const data = getLessons(rawData);
+        output.write(JSON.stringify(data));
+        output.end();
     });
 }
 
