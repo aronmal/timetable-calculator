@@ -1,5 +1,8 @@
 import fs, { promises } from 'fs';
-import { getLessons, convert, getCourses, sanitise } from './helpers';
+import convertPdfFont from './helpers/convertPdfFont';
+import getCourses from './helpers/getCourses';
+import getLessons from './helpers/getLessons';
+import sanitise from './helpers/sanitise';
 
 export async function extractCourses(source: string) {
     console.log('[INFO] Start...');
@@ -14,7 +17,7 @@ export async function extractCourses(source: string) {
         const buff = _buff.toString()
         if (typeof buff !== 'string')
             return;
-        rawData = [ ...rawData, ...convert(buff)];
+        rawData = [ ...rawData, ...convertPdfFont(buff)];
     });
     stream.on('end', () => {
         const data = getCourses(sanitise(rawData));
