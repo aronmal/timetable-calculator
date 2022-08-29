@@ -3,11 +3,17 @@ import { CheckLesson, Course, day } from "./interfaces";
 
 function lessonsFromDay(courses: Course[], day: day, week: number) {
     const uncheckedLessons: CheckLesson[] = [];
-    courses.forEach(course => {
-        day.forEach((row, hour) => row.forEach(col => {
+    let doSport = false;
+    day.forEach((row, hour) => row.forEach(col => {
+        if (col.course === 'SPORT' && !doSport) { // Sport for everyone! ;)
+            doSport = true;
+            uncheckedLessons.push({name: col.course.toLocaleUpperCase(), teacher: '', hour, check: 100});
+            return;
+        }
+        courses.forEach(course => {
             const checkForTeacher = col.teacher.split(' ')[0].split(''), cFT = checkForTeacher;
             const checkedTeacher = checkForTeacher.map(s => course.teacher.toLocaleLowerCase().indexOf(s.toLocaleLowerCase())), cT = checkedTeacher.filter(b => b >= 0);
-            const checkForName = col.course.split(' ')[0].split(''),cFN = checkForName;
+            const checkForName = col.course.split(' ')[0].split(''), cFN = checkForName;
             const checkedNameShort = checkForName.map(s => course.courseNumber.toLocaleLowerCase().indexOf(s.toLocaleLowerCase())), cNS = checkedNameShort.filter(b => b >= 0);
             const checkedNameLong = checkForName.map(s => course.courseName.toLocaleLowerCase().indexOf(s.toLocaleLowerCase())), cNL = checkedNameLong.filter(b => b >= 0);
             const check = checkedTeacher.reduce((r,c) => r + c, 0)
@@ -19,8 +25,8 @@ function lessonsFromDay(courses: Course[], day: day, week: number) {
                         return;
                 uncheckedLessons.push({name: col.course.toLocaleUpperCase(), teacher: course.teacher, hour, check});
             }
-        }))
-    })
+        })
+    }))
     return uncheckedLessons;
 };
 function checkLessons(uncheckedLessons: CheckLesson[]) {
