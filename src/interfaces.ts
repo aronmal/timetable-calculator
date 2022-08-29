@@ -27,5 +27,4 @@ export interface CheckLesson {
     name: string;
     teacher: string;
     hour: number;
-    check: number;
 };
