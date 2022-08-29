@@ -1,6 +1,8 @@
 import { courses, days } from "../tmp/sources";
 import { CheckLesson, Course, day } from "./interfaces";
 
+const notW = (s: string) => s.replaceAll(/\W/g, '');
+const low = (s: string) => s.toLocaleLowerCase();
 function lessonsFromDay(courses: Course[], day: day, week: number) {
     const uncheckedLessons: CheckLesson[] = [];
     let doSport = false;
@@ -11,15 +13,11 @@ function lessonsFromDay(courses: Course[], day: day, week: number) {
             return;
         }
         courses.forEach(course => {
-            const checkForTeacher = col.teacher.split(' ')[0].replaceAll(/\W/g, ''), cFT = checkForTeacher.toLocaleLowerCase();
-            const checkedTeacher = course.teacher.replaceAll(/\W/g, '').toLocaleLowerCase().indexOf(cFT) >= 0, cT = checkedTeacher;
-            const checkForName = col.course.split(' ')[0].replaceAll(/\W/g, ''), cFN = checkForName.toLocaleLowerCase();
-            const checkedNameShort = course.courseNumber.replaceAll(/\W/g, '').toLocaleLowerCase().indexOf(cFN) >= 0, cNL = checkedNameShort;
-            const checkedNameLong = course.courseName.replaceAll(/\W/g, '').toLocaleLowerCase().indexOf(cFN) >= 0, cNS = checkedNameLong;
-            // if (col.course === 'NL')
-            // if (col.course === 'DE' && course.teacher === 'Ostendorf')
-            // if (col.teacher === 'Bräu' && course.teacher === 'Bräutigam')
-            //     console.log(course.courseNumber, course.teacher, cFT, col.teacher.split(' ')[0], cT, cFN, cNS , cNL, checkForName);
+            const checkForTeacher = notW(col.teacher.split(' ')[0]), cFT = low(checkForTeacher);
+            const checkedTeacher = low(notW(course.teacher)).indexOf(cFT) >= 0, cT = checkedTeacher;
+            const checkForName = notW(col.course.split(' ')[0]), cFN = low(checkForName);
+            const checkedNameShort = low(notW(course.courseNumber)).indexOf(cFN) >= 0, cNL = checkedNameShort;
+            const checkedNameLong = low(notW(course.courseName)).indexOf(cFN) >= 0, cNS = checkedNameLong;
             if (cT && (cNS || cNL)) {
                 if (col.week !== 3)
                     if (col.week !== week)
@@ -49,14 +47,6 @@ function getDate() {
 }
 function filterFor(name: string) {
     const coursesOfName = courses.filter(course => course.students.filter(student => student.name === name).length);
-    // const lessons: {name: string, count: number}[] = [];
-    // days.forEach(day => day.forEach(row => row.forEach(col => {
-    //     const index = lessons.findIndex(obj => obj.name === col.course);
-    //     index >= 0 ? lessons[index].count++ : lessons.push({name: col.course, count: 1});
-    // })))
-    // console.log(lessons.sort((a, b) => a.count - b.count));
-
-    // console.log(...coursesName.map(course => `"${course.courseName}"`));
 
     const {weekResult, dayNames, day} = getDate();
     if (!day)
