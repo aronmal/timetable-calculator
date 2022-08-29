@@ -1,4 +1,4 @@
-import { day, period, Week } from "../interfaces";
+import { day, ExportLesson, WeekEnum } from "../interfaces";
 
 const replaceHTMLTableTags = (arr: string[]) => arr
     .join('')
@@ -8,7 +8,7 @@ const replaceHTMLTableTags = (arr: string[]) => arr
     .replaceAll('</td>', '"')
     .replaceAll(/]\n\s*\[/g, '],[')
     .replaceAll(/"\n\s*"/g, '","');
-const getWeek = (course: string) => /\((UW|GW)\)/.test(course) ? (/\(UW\)/.test(course) ? Week.odd : Week.even) : Week.all;
+const getWeek = (course: string) => /\((UW|GW)\)/.test(course) ? (/\(UW\)/.test(course) ? WeekEnum.odd : WeekEnum.even) : WeekEnum.all;
 function sortLessons(data: string[][]) {
     let sorted: day = [];
     for (let x = 0; x < data.length / 4; x++) {
@@ -16,14 +16,14 @@ function sortLessons(data: string[][]) {
         for (let y = 1; y < data[x * 4].length; y++) {
             const course = data[x * 4 + 2][y]
             const teachers = data[x * 4 + 3][y].split(' ');
-            const cache: period[] = [{
+            const cache: ExportLesson[] = [{
                 room: data[x * 4][y],
-                course,
+                course: course.split(' ')[0],
                 teacher: teachers[0],
                 week: getWeek(course)
             }, {
                 room: data[x * 4 + 1][y],
-                course,
+                course: course.split(' ')[0],
                 teacher: teachers[1],
                 week: getWeek(course)
             }].filter(e => e.room || e.teacher);

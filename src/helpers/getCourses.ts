@@ -1,9 +1,9 @@
-import { CourseType, PagesType, StudentType } from "../interfaces";
+import { Course, PagesType, Student } from "../interfaces";
 
 function getStudents(arr: string[]) {
-    let result: StudentType[] = [];
+    let result: Student[] = [];
     for (let i = 8; i < arr.length-2; i += 3) {
-        const cache: StudentType = {
+        const cache: Student = {
             index: parseInt(arr[i]),
             name: arr[i+1],
             school: arr[i+2]
@@ -34,7 +34,7 @@ function getCourses(pages: PagesType) {
             .filter(v => v)
         )
         .map(e => {
-            const course: CourseType = {
+            const course: Course = {
                 courseNumber: e[3],
                 courseName: e[5],
                 teacher: e[7],

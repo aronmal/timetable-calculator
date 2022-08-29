@@ -1,25 +1,31 @@
-export interface StudentType {
+export interface Student {
     index: number,
     name: string,
     school: string
 };
-export interface CourseType {
+export interface Course {
     courseNumber: string,
     courseName: string,
     teacher: string,
-    students: StudentType[]
+    students: Student[]
 };
-export type CoursesType = CourseType[];
+export type CoursesType = Course[];
 export type PagesType = string[];
-export interface period {
+export interface ExportLesson {
     room: string,
     course: string,
     teacher: string,
     week: number
 }
-export type day = period[][];
-export enum Week {
+export type day = ExportLesson[][];
+export enum WeekEnum {
     odd = 1,
     even = 2,
     all = 3
+};
+export interface CheckLesson {
+    name: string;
+    teacher: string;
+    hour: number;
+    check: number;
 };
