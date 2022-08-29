@@ -5,11 +5,11 @@ const source = './tmp/2022_23 Jg_12 Kurslisten.txt';
 
 // extractCourses(source);
 
-const source2 = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag'];
+// extractLessons();
 
-// source2.forEach((s,i) => extractLessons(s, i));
-
-const name = 'Malcher, Aron';
+// const name = 'Malcher, Aron';
 // const name = 'Adana, Kerem';
+// const name = 'Doyran, Ethem';
+const name = 'Lucas, Eric';
 
 filterFor(name);

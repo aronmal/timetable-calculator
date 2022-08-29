@@ -12,7 +12,6 @@ function getStudents(arr: string[]) {
             if (!/^\d+\./.test(arr[i+n])) // early return on NO date
                 return;
             i ++; // else increment index and correct
-            console.log(n, arr[i+n-2], arr[i+n-1], arr[i+n], arr[i+n-1])
             cache.school = arr[i+2];
             if (n < 2)
                 cache.name = arr[i+1];
