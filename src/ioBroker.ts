@@ -1,7 +1,7 @@
 import { courses, days } from "../tmp/sources";
 import { CheckLesson, Course, day } from "./interfaces";
 
-const notW = (s: string) => s.replaceAll(/\W/g, '');
+const sanitise = (s: string) => s.replaceAll('-', '');
 const low = (s: string) => s.toLocaleLowerCase();
 function lessonsFromDay(courses: Course[], day: day, week: number) {
     const uncheckedLessons: CheckLesson[] = [];
@@ -13,12 +13,13 @@ function lessonsFromDay(courses: Course[], day: day, week: number) {
             return;
         }
         courses.forEach(course => {
-            const checkForTeacher = notW(col.teacher.split(' ')[0]), cFT = low(checkForTeacher);
-            const checkedTeacher = low(notW(course.teacher)).indexOf(cFT) >= 0, cT = checkedTeacher;
-            const checkForName = notW(col.course.split(' ')[0]), cFN = low(checkForName);
-            const checkedNameShort = low(notW(course.courseNumber)).indexOf(cFN) >= 0, cNL = checkedNameShort;
-            const checkedNameLong = low(notW(course.courseName)).indexOf(cFN) >= 0, cNS = checkedNameLong;
-            if (cT && (cNS || cNL)) {
+            const checkForTeacher = sanitise(col.teacher.split(' ')[0]), cFT = low(checkForTeacher);
+            const checkedTeacher = low(sanitise(course.teacher)).indexOf(cFT) >= 0, cT = checkedTeacher;
+            const checkedTeacher2 = /\(\d+\)/.test(col.teacher) ? course.teacher.indexOf(col.teacher.slice(...[1,2].map(n => col.teacher.indexOf('(')+n))) >= 0 : true, cT2 = checkedTeacher2;
+            const checkForName = sanitise(col.course.split(' ')[0]), cFN = low(checkForName);
+            const checkedNameShort = low(sanitise(course.courseNumber)).indexOf(cFN) >= 0, cNL = checkedNameShort;
+            const checkedNameLong = low(sanitise(course.courseName)).indexOf(cFN) >= 0, cNS = checkedNameLong;
+            if (cT && cT2 && (cNS || cNL)) {
                 if (col.week !== 3)
                     if (col.week !== week)
                         return;
@@ -58,7 +59,7 @@ function filterFor(name: string) {
 
     dayNames.forEach((s, i) => {
         console.log(s + ':');
-        const rawLessons = lessonsFromDay(coursesOfName, day, weekResult);
+        const rawLessons = lessonsFromDay(coursesOfName, days[i], weekResult);
         const lessons = rawLessons.map(({hour, ...lesson}) => ({...lesson, hour: `${(hour+1)*2-1}. und ${(hour+1)*2}.`}));
         console.log(lessons);
     });

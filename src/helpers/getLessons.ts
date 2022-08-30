@@ -15,16 +15,16 @@ function sortLessons(data: string[][]) {
         sorted.push([]);
         for (let y = 1; y < data[x * 4].length; y++) {
             const course = data[x * 4 + 2][y]
-            const teachers = data[x * 4 + 3][y].split(' ');
+            const teachers = data[x * 4 + 3][y];
             const cache: ExportLesson[] = [{
                 room: data[x * 4][y],
                 course: course.split(' ')[0],
-                teacher: teachers[0],
+                teacher: /\(\d+\)/.test(teachers) ? teachers: teachers.split(' ')[0],
                 week: getWeek(course)
             }, {
                 room: data[x * 4 + 1][y],
                 course: course.split(' ')[0],
-                teacher: teachers[1],
+                teacher: /\(\d+\)/.test(teachers) ? '' : teachers.split(' ')[1],
                 week: getWeek(course)
             }].filter(e => e.room || e.teacher);
             sorted[x].push(...cache);
